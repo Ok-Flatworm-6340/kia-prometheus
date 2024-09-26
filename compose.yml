@@ -1,0 +1,29 @@
+name: kia-prometheus
+services:
+  kia_exporter:
+    build:
+      context: build/
+      dockerfile: Containerfile
+    environment:
+      API_USERNAME: ${API_USERNAME}
+      API_PASSWORD: ${API_PASSWORD}
+      API_PIN: ${API_PIN-}
+      API_POLLING_INTERVAL: ${API_POLLING_INTERVAL-900}
+      API_REGION: ${API_REGION-3}
+      API_BRAND: ${API_BRAND-1}
+    image: localhost/kia_exporter
+    ports:
+    - 8000:8000
+    restart: always
+    stop_grace_period: 1s
+  prometheus:
+    image: index.docker.io/prom/prometheus:v2.53.2
+    ports:
+    - 9090:9090
+    restart: always
+    volumes:
+    - ./run/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ./run/prometheus/prometheus.rules.yml:/etc/prometheus/prometheus.rules.yml:ro
+    - prometheus:/prometheus
+volumes:
+  prometheus: {}

@@ -1,0 +1,35 @@
+groups:
+- name: default
+  rules:
+
+  - alert: Heartbeat
+    expr: vector(1)
+    labels:
+      event: "Heartbeat"
+      instance: "prometheus"
+      monitor: "prometheus"
+      severity: "major"
+      timeout: "120"
+    annotations:
+      summary: "Heartbeat from prometheus"
+      description: "Heartbeat from from prometheus"
+
+  - alert: Service Down
+    expr: up == 0
+    labels:
+      service: Platform
+      severity: major
+      correlate: Service Up,Service Down
+    annotations:
+      description: Service {{ $labels.instance }} is unavailable.
+      value: DOWN ({{ $value }})
+
+  - alert: Service Up
+    expr: up == 1
+    labels:
+      service: Platform
+      severity: normal
+      correlate: Service Up,Service Down
+    annotations:
+      description: Service {{ $labels.instance }} is available.
+      value: UP ({{ $value }})

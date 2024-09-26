@@ -1,0 +1,15 @@
+FROM index.docker.io/python:3.11 as builder
+
+COPY requirements.txt requirements.txt
+RUN pip3 install --upgrade pip && \
+    pip3 install -r requirements.txt
+
+FROM gcr.io/distroless/python3:debug-nonroot
+
+ENV PYTHONPATH /usr/local/lib/python3.11/site-packages
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+COPY main.py main.py
+COPY --from=builder ${PYTHONPATH} ${PYTHONPATH}
+CMD ["main.py"]
+EXPOSE 8000

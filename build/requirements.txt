@@ -1,0 +1,13 @@
+beautifulsoup4==4.12.3
+certifi==2024.8.30
+charset-normalizer==3.3.2
+curlify==2.2.1
+hyundai_kia_connect_api==3.22.10
+idna==3.10
+prometheus_client==0.20.0
+python-dateutil==2.9.0.post0
+pytz==2024.2
+requests==2.32.3
+six==1.16.0
+soupsieve==2.6
+urllib3==2.2.3
