@@ -14,22 +14,40 @@ groups:
       summary: "Heartbeat from prometheus"
       description: "Heartbeat from from prometheus"
 
-  - alert: Service Down
+  - alert: ServiceDown
     expr: up == 0
     labels:
       service: Platform
       severity: major
-      correlate: Service Up,Service Down
+      correlate: ServiceUp,ServiceDown
     annotations:
       description: Service {{ $labels.instance }} is unavailable.
       value: DOWN ({{ $value }})
 
-  - alert: Service Up
+  - alert: ServiceUp
     expr: up == 1
     labels:
       service: Platform
       severity: normal
-      correlate: Service Up,Service Down
+      correlate: ServiceUp,ServiceDown
     annotations:
       description: Service {{ $labels.instance }} is available.
       value: UP ({{ $value }})
+
+  - alert: VehicleLeftUnlocked
+    expr: (vehicle_door_lock_status == 0 and vehicle_engine_running_status == 0) * on(vehicle_id) group_left(vehicle_name) vehicle_info
+    for: 10m
+    labels:
+      correlate: VehicleLeftUnlocked,VehicleLocked
+    annotations:
+      description: "{{ $labels.vehicle_name }} left unlocked"
+      summary: "{{ $labels.vehicle_name }} left unlocked"
+
+  - alert: VehicleLocked
+    expr: (vehicle_door_lock_status == 1 and vehicle_engine_running_status == 0) * on(vehicle_id) group_left(vehicle_name) vehicle_info
+    labels:
+      correlate: VehicleLeftUnlocked,VehicleLocked
+      severity: normal
+    annotations:
+      description: "{{ $labels.vehicle_name }} locked"
+      summary: "{{ $labels.vehicle_name }} locked"
